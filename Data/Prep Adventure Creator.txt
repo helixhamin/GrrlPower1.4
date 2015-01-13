@@ -1,0 +1,1 @@
+To update the adventure creator for use, copy all files in data folder except for maps and mapinfos.rvdata to Adventure Creator/data

@@ -1,0 +1,102 @@
+To create an adventure, open the Grrl Power!.rvproj file in the latest version of RPG Maker VX and copy the Template Adventure Map, then open the copy.  You can design your adventure using the standard RPG Maker interface (you should be familiar with it before making a serious attempt at adventure creation).  You can do just about anything you want here, except adding to the database or scripts.  
+
+Map making tips
+This game uses some events that interface with the main game processes, including the sex engine.  The Template Adventure Map (what you should have copied to start making your adventure), contains these events.  You can modify the events however you choose to make the game behave the way you want during your map. If you create a multiple map adventure, you'll want to copy these events to each map.
+Here is a list of the various events and what they do:
+002:Initialize Map - This event sets up the game variables for the map and defines the random names and classes used by the system.  To bypass random names and classes, you can set them all to the same, or have another event in the map do so when it is activated.  Here is a breakdown of the switches and variables controlled by this event:
+  Training: Determines whether this is a training map or not (only used by the Grrl Power trial pit right now)
+  Rip Chance: How likely a single hit will cause clothing damage.
+  Sexers: The default number of NPC's who will engage in sex with the player when sex starts.
+  Sexer Type: Determines the type of creature the sex will occur with by default.
+    1 - Male HUman
+    2 - Female Human
+    3 - Beast
+    4 - Tentacle Monster
+    5 - Mixed/Random
+  Sex Control: Determines who is in control of the sex by default.
+    1 - Consensual, Player Dom
+    2 - Consensual, Player Sub
+    3 - Rape, Player Sub
+  Enemy Anger Level: Default level of enemy anger.  The higher this is, the less likely enemies will be to block attacks, but they will also be more able to break through player blocks and they will be rouger during rape.  This will decrease over time.
+  Next you have the Actor Names.  There are 6 NPC Names and 6 NPC Classes, each Name goes to the similarily number class.  By default, these are randomized.  The names and classes here will be used to provide personalization to the NPC's during sex scenes and for random chat.
+001:Random Dialogue - This event contains various phrases that will be spoken by the npc's occasionally.  To disable random phrases, delete this event.  The event uses npc classes defined in the Initialize Map event.
+003:Intro Text - This will bring up a text display describing the scene upon entering the map.  It will only display once.
+004:Humiliation Handler - This sets whether the map is a public place or not.  If it's a public place, the player's humiliation will increase over time for various states of undress, unless they have a trait that protects them from this.
+005:Bad End Process - This is a sequential event which occurs when the player runs out of health.  By default, the player character will be raped.  You can rewrite this event however you like.  Delete the event to have the player simply wake up where they went down some time later.
+006:Projectile Handler - This is a special event which must be present on a map for ranged weapons to work.  If you delete it, guns will waste ammo without firing, so its not recommended to remove it.
+007:Taunt Handler - This event handles what occurs when the player uses the taunt ability.  By default it will randomly move a few NPC's toward the player, causing them to attack if they are hostile.  It also increases the overall enemy anger level, reducing their defense but increasing their offense.  It will also randomly cause them to speak a response.  You can edit this event to change the rate of anger increase, change the response speech, and change which enemies will charge the player when taunted.
+008:Potion Making - This event controls whether the player can make healing potions using the apothecary skill on this map.  Generally, this is only possible in wilderness maps.  If this is off, the player gets the message "You couldn't find anything around here to make a healing potion out of".
+
+Enemies - Included in the template map are 4 enemies.  Each one has a different HP level from 1 to 4.  The HP level is a basic indicator of how many hits it takes to kill them, however, this can vary quite a bit with blocking.  Each time an enemy is hit (and fails to block), its self switch is moved up one.  So they start with no self switches, on the first hit, they go to self switch A, and then B, and so on.  Each self switch allows you to specify a new damage level, block chance, and speed for the NPC:
+  NPC Dam Level: This is an indication of how much damage the enemy will do when it hits the player and is unblocked.  If it is blocked, the actual damage will be less, based on the player's block skill and weapon.  4 is a low amount, and can be completely blocked by even an unskilled player.  7 is high, and 15 or more would be very high.
+  Enemy Block Chance:  This is the base chance that the enemy will block an attack.  Several factors can modify this but it can never be less than 0.  1 is very low, while 20 or 30 is high.  It's a percentage, so 100 would make it impossible to damage this enemy without modifiers.  The actual block chance is modified by the player's weapon and NPC anger level, which can lower it.
+  Self Switch D page:  Each enemy has an event page for Self Switch D.  This is their dead page.  This is generally used to handle respawning.  Here the NPC is invisible and can't do anything.  They will wander around as a "ghost" until it's time to respawn.  What this does is basically cause the NPC to respawn in a random position that was reachable from the place where they died.  Optionally, you can set a "Erase Event" command in front of the Random Respawn label to have the enemy die permanently.  This will prevent the event from respawning.  This is not recommended if you want this event to offer grind gameplay.
+  Death reward page:  The exact page varies based on the NPC, but it's usually at the top of their dead page (Self switch D) or on the page right before it.  This is where EXP rewards for killing the NPC are given, and where the death sound plays, and any loot events are called.  You can edit these as you wish.  If you want the NPC to drop a specific item, you can replace the loot event call with the Add Item command as desired.
+
+Common Events:  There are lots of common events in the game that do all sorts of things.  Some of them are complex and may take some study to figure out, however remember that you can use any of them in your adventures.  Experiment with them and don't be afraid to read through some long, complex event scripts.
+Other Events:  Remember that you can copy events from other parts of the game.  There is a weather handler event on Venus that you can use to create dynamic thunderstorms, for instance.
+
+Note about Weapons and Armors:  Grrl Power takes a very unconventional approach to weapons and armors.  You may notice that the game's weapons are listed as "armor", this is because I wanted to allow players to use multiple rings and mix and match their effects, so rings are actually weapons internally.  To the player, rings work like rings and weapons work like weapons.  It can be a little confusing for the developer however.  Don't worry about it too much, just remember, if you want to give a player a weapon in your adventure, use the "add armor" command.
+
+NO NEW ACTORS, SKILLS, WEAPONS, ARMORS, STATES, ANIMATIONS, ITEMS, COMMON EVENTS, SKILLS, CLASSES, SWITCHES, AREAS, or VARIABLES.
+Basically, no additions to the database!
+The reason for this is because adventures are designed to be modular.  Users will only want to download the map file and if you include the .rvdata files that you change, they will overwrite the base .rvdata files, making other adventures act strange, crash, and possibly damaging the user's game files.  You can add your own sound effects, music, and graphics though, since they don't overwrite anything (as long as you use new filenames!).
+Also, Areas are not used in Grrl Power because combat is action-based and the RPGMaker combat system is not used.
+
+Adventure Resources
+I've provided a variety of items, weapons, armors, actors (for string input), animations, etc, with the game that can be used for your adventures.  Some of them are not used anywhere else in the game, but keep in mind they may be used by other adventure creators and if the end user has downloaded one of those adventures, they could already have acquired the item in another adventure.  If you want to make something specific for your adventure, see if it can be done by using events in a clever way.  I apologize for these limitations but for now it's the best we can do.  Also, you may want to remove items the player gains during the adventure when they complete the adventure, if you don't want them carrying them into other adventures and potentially unbalancing them. For instance, if the player acquires an Old Key during your adventure, have it get broken once the door it opens is open, or just discreetly take it from them when your adventure is finished.  You could also put in a check at the beginning of your adventure to see if players already have any of the items that you don't want them to have at the beginning, and then remove them so they have to get them the normal way during your adventure.
+Adventure Switches
+  Switches 137-146 are special Adventure Switches that you can use for your adventure.  They are reset to off when another adventure is started, so keep this in mind, but they are not used by anything else in the game, so use them as you like.  A warning is in the adventure template file to remind players not to start another adventure when they already have one running.
+Adventure Variables
+  Variables 443-452 work just like the Adventure switches.  You can use them as you wish for your adventure.  Like the switches, they are reset when another adventure is started.
+Adventure Strings (Actors)
+  One of the unique things I do in Grrl Power is use the Actors table to hold string variables (text variables).  This allows me to have a variety of text that I can manipulate in the game.  As such, I've provided 10 Adventure Strings for you to use in your adventure.  These are actors 37-46.  Since these are more than just names, you could theoretically even use them to store additional variable data by using each actor's parameter values as well.
+
+Graphics and Sound:
+You can supply your own media with your adventure, but you need to make sure it unpacks to the right places.  As such, you may want to use a folder structure in your zip file.  Make sure you provide instructions in the readme so that the end user knows where to put all the media.
+
+Adventure Installation
+It's important to remember that when you release your adventure, you'll just be releasing the map file(s) and any graphics or sound you provided with it.  The end user still has to add it to their game by adding it to one of the Adventure Common Events.  Which Common Event they add it to determines where the adventure will appear in the game.  If you want your adventure to appear in a specific place, you should put instructions in your readme.txt telling them which common event to add it to.  In the end, this is only a suggestion and the end user can put it wherever they want.  Also make sure you indicate the intended starting coordinates.
+
+Adventure Template:
+Its recommended you use the following template in a readme.txt attached to your adventure:  (Replace the fields in <> with your own info)
+
+Finishing your Adventure:
+In order to make the process of distributing your adventure as easy as possible, you will need to open the Adventure Creator rvproj file and copy your adventure maps into the Adventure Creator rvproj (which has no maps in it when you first open it).  Once all the maps are there, save the project.  To distribute your adventure, copy the Adventure Creator folder and rename it to whatever you want, and then compress it in a zip file.
+
+Installing Adventures:
+To install an adventure, unzip the compressed file anywhere and open the rvproj file.  Copy the maps from the map list into your current Grrl Power rvproj file (you have to open it first).  Then you will need to add a transfer event to your game so that you can get to the adventure.
+
+-------------------------------------------------------------------------------------------
+Adventure Name: <name of your adventure>
+Adventure Creator: <your name>
+Files:
+ <the file names of your map files, graphics, sound and music>
+Description:
+ <description/backstory>
+
+Installation Instructions:
+Unpack the archive anywhere and open the contained rvproj file with RPG Maker VX.
+Open your Grrl Power rvproj file as well, so that both projects are open.
+Copy the maps out of the adventure's rvproj into your Grrl Power rvproj.  They will go to the bottom of the list.
+Copy any music, sounds, and graphics also included with the adventure into the respective folders in your Grrl Power folder.
+In your Grrl Power.rvproj, and open one of these common events:
+239:Town Adventure Mods
+240:Planet Adventure Mods
+241:Orbit Adventure Mods
+242:Wilderness Adventure Mods
+243:Southside Adventure Mods
+The event you choose will determine what part of the game will allow you to access this adventure.
+
+If you're familiar with RPG Maker VX, all you need to know at this point is that you need to add a transfer command to take the player to the starting map in this pack as a choice in this event.  If you're not that familiar with it or you don't understand how to do that, I've included detailed instructions as follows:
+Where it says "Show Choices", click and hit the spacebar.  In one of the fields that says "no adventure loaded", type a name for this adventure and hit OK.
+You should see your change reflected in the script.  Underneath where you see the name you just entered, you will see "Call Common Event: Reset Adventure Resources." Select underneath this where you see the @> and hit enter.
+Click on Tab 2, and choose Transfer Player.
+Where it says Direct Designation, click on the ... box and look for <starting map name in the list to the left.  Select that and click on the map display on the right to set the starting location where you will start this adventure.
+Click Ok, and then Ok again, and Ok one more time.  Save the project in the file menu (or hit Ctrl-S), and close it.  When you run the game and go to the area indicated by the common event you selected, you should be able to select this adventure to play.  Enjoy!
+
+It sounds complicated at first, but once you do it a couple times you'll see how simple it is.
+
+Warning:
+Starting a different adventure will reset variables and switches that may be used by this adventure.  Make sure you complete it before you start another adventure or your progress in this one may be lost.
+-------------------------------------------------------------------------------------------

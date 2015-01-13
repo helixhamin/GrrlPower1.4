@@ -1,0 +1,127 @@
+The changes in brief:
+
+In the Common Events file:
+In rape scenes, removed option to cancel out of some dialog choices.
+Fixed bug where second rape on a map doesn't work.
+Fixed bug where humiliation from nudity no longer occured (ever, any map) after sex.
+Fixed LAN party clothing bugs
+Sort of implemented consensual (sub) sex, only used in LAN party currently.
+Dazed monsters can't hit player anymore.  Blocking will not block clothing damage 100%.
+Can capture pirates while oneshotting them.
+
+When performing RBUS procedure to repair reactor, fixed bug where repair didn't use up a cannibalized reactor.  Also set so that when player chooses a reactor to cannibalize, doesn't keep asking which ship to cannibalize.
+
+When fixing reactor with RBUS, the lights come back on.
+
+When looting cargo, added choice (with high intelligence) to transfer all cargo except garbage, most valuable first until hold is full or no cargo left to loot.
+
+Ship status report shows Mining Bot health correctly.
+
+If player "waits" or tries unsuccessfully to disengage from a pirate, set so that the pirate ship gets the first move in combat.
+
+Demanding Surrender in space combat uses an action point, so player can't spam this until it randomly works!
+
+Fixed bug where surrendered pirates were still in combat.
+
+After space combat in some circumstances, if reactor was damaged, claxon kept sounding until one left orbit, and screen stayed red indefinitely.  Now they don't.
+
+Turned off weather effects when player launches from planet, so it should no longer rain in space.
+
+
+In the Space Port map (map 035):
+Corrections Officer (to pay bounty on pirates) now shows up when summoned, and pays correct bounty.
+
+Repair/Upgrade desk will now sell working mining bots, and fix damaged ones.  Reactor & shield repairs no longer make these systems better than perfect.
+
+
+
+In the items file:
+Medical Applicator should now work (Kagarus' fix)
+Potion of Superficial Alteration should now work.
+
+
+In the Training Dungeon map (map013):
+Fixed bug where player could not move (Catatonic Man's fix)
+
+
+In the Central City map (map011):
+Event 177 (the weapons dealer) had his event command list duplicated, removed the duplicate.
+Event 202 (Grrl Power girl who reports on player's state), text lines no longer too long for box.
+
+
+In character creation & level up (maps 010 & 012):
+Guitar skill can now be purchased properly (earlier failed if certain other skills had been purchased before the guitar skill).
+
+
+
+The changes in detail:
+Common events:
+049:Sex: Rape (Male)
+		Removed cancel option from a few Show Choices branches.
+		Set sexers=6 at end of event (fixes crash on second rape on map bug)
+		Added 40:Sex In Progress = off to end of CE:Rape. (fixes no humiliation bug)
+051:Sex: Consensual Sub
+		Allowed to proceed, fixed infinite loop bug where gangbang without enough sexers
+		by setting Var 0454 to 1 before skipping back to regular sex.
+073: LAN party	When betting bra or panties, in a rematch with those items lost event wasn't
+		checking for outerwear to remove, and then was confused when player still had
+		coverage.  Put in routine to go "backwards" and check for shirts & pants.
+		When winning clothing, current items were updated but did not call 060: Update
+		Slots with Currently Worn.  Fixed this - in fact the call was there, after the
+		randomizer to see what was added, but it was never reached because of the Exit
+		Event Processing lines.  Deleted those and just used one Exit Event after the
+		Update Slots with Currently Worn & Coverage Update lines.
+106: Combat NPC - Full Health: Moved everything around, so block checking is done within "player
+		is hit" loop.  Now dazed monsters can't hit even if player IS blocking (makes more
+		sense), and block doesn't guarantee no clothing damage (instead reduces chance of
+		clothing damage by block strength).  Made this change to 107, 108, & 109 also.
+		Also moved the Stun enemy
+		section before the oneshot, so one can capture pirates while oneshotting even
+		without Kagarus' blaster mod.
+203: Engineering	For RBUS, if player chose not to cannibalize any ship type, RBUS was
+		performed for free.  Put RBUS in conditional so only run when ship type was
+		chosen, also added label & jumps so when any type is chosen, jumps to procedure
+		instead of asking about other types.  Added 0187:Darmap = OFF at end of RBUS.
+213:Ship Loot	Added choice, when Int > 2, to transfer all cargo except garbage (in descending
+		value order)
+228: Status Report	Mining Bot damage corrected to use Mining Bot Health, not Damage (which
+			just reflects damage taken on previous sweep)
+260: Planet Launce Sequence: Added 4th line, setting weather effects to NONE
+277:Pirate Attack	Used 051:Temp Switch 1 to pass info to CE279.  Set if player is attacking,
+		reset if player is waiting.
+279:Space Combat (Pirates)	To prevent player from spamming surrender demand until it works,
+				after Label: Demand Surrender, put [0450:SCom Player AP] -= 1
+		To eliminate problem where surrendered pirates are still in
+		combat after surrendering, after it reports the Galaxy captured, right before
+		Break Loop put Switches: [0137:SCom NME Dead] = ON.  No idea why this is
+		necessary, the break loop should do it!  Since it didn't, removed break loop,
+		instead Jumped to Label: Leave Battle.  Created this label right before
+		conditional branch: 0137 on, "Sensors detect no remaining threats..."  NOTE:
+                I'm not sure if this is still needed in latest patch!  Does this bug still exist?
+		Now receive switch 051:Temp Switch 1 from CE277 - if set, player
+		is attacking & moves first.  If false, pirates attacking (player waited), pirates
+		move first.  Put this conditional jump (& setting switch!) within loop right after
+		setting vars (0452), checking for reactor failure, and pirate taunting.
+		At very end of CE, tinted screen back to neutral & turned off Background Sound.
+		One pirate taunt (with red-headed pirate, promising Grrl would be kept alive) was
+		too long for text box, shifted it onto four shorter lines.
+
+
+Map035:Space Port:
+		Corrections Officer now shows up when summoned by guard (added switch 107:Deliver
+		Pirates = ON to guard even 59).
+		C.O. used to increment gold by number of arrested pirates (var 359), now actually 			pays the bounty shown in text box (var 361)
+
+		Event 181 (repair desk): When purchasing mining bot, added 231 mining bot health =
+		100, 232 level = 100.  Added repair option for mining bot when rest of ship
+		repaired. For reactor/shield repairs, was incrementing Reactor/Shield Output by
+		Reactor/Shield Level.  Now correctly sets TO that level, so a repaired device is
+		at full power, not full power plus some extra.
+
+
+Items:
+Item109: Medical Applicator, scope changed to "none", should now work.  (This is Kagarus' fix)
+Item125: Potion of Superficial Alteration, changed scope to "none".
+
+
+Map13:Training Room: added "erase event" to end of Combat Setup event (Catatonic Man's fix)

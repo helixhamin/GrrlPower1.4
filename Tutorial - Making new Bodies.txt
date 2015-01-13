@@ -1,0 +1,17 @@
+Graphics:
+* Create paperdoll pic for body, save as P_bodyxx.png where xx = unused body number (example, 50)
+* Create character chibi for body, save as playerpicsxx.png, using the same xx number as above
+* Create character faces for body and save in faces folder
+* Create additional hentai images for body as desired and name like paperdoll pic but with tags as follows:
+  P_Bodyxxd.png = defeat pic
+  P_Bodyxxf.png = after fuck pic
+  P_Bodyxxm.png = after milked pic
+  P_Bodyxxa.png = after anal pic
+  P_Bodyxxb.png = after bj pic
+  P_Bodyxxc.png = captive pic
+
+Code:
+* Add paperdoll display code to phase 2 process common event
+* Add chibi and face display code to Coverage Check common event
+* Add chibi display code to projectile handler common event
+* Add advanced hentai pics to hentai common events

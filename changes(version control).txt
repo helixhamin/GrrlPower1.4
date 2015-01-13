@@ -1,0 +1,239 @@
+v1.14
+New code/gameplay changes:
+- fixed char creation monster giving exp
+- fixed obsolete clothes change variable still being used in parts of the code
+- fixed: clothing loot stays on screen during darkness
+- fixed: tactical display does not display corect number of capped ships
+- fixed: capped ship was not being removed from player's fleet when sold
+- possibly fixed: sudden scream upon docking with a ship, spontaneous pirate deaths, phantom loot, respawning pirates
+- fixed: getting "social npc" (actor 13) in hentai scenes  (thanks to legraf for spotting this fix)
+- fixed: pregnancy updates not occuring correctly after birth
+- added: ability to choose specific items when shopping for clothes
+
+New graphics:
+- new iss pic
+
+New sounds/music:
+
+
+Known Issues/Work in Progress/Future Plans:
+- add light blue and silver hair
+- glasses do not properly fit some characters, need to fix
+- some overshirts have bad sleeve overlap, need to fix
+/ build rest of solar system
+- replace survival skill with knife requirement for advanced survival crafting recipes
+- enemy projectiles
+/ implement Social system
+/ build social area: bar
+- overlay gameplay with perv opportunities and nudity responses
+/ finish cargo purchasing system
+- continue work on alien development
+- make space encounters
+- molestation attacks (increasing frequency/severity based on how clothed the player is)
+- add more landing music tracks
+- need to add hentai events to bad ends on random planets, implement bestiality
+- finish rest of derelicts
+- need to survey and adjust possible sfx and music volume levels
+- put in a check for internal scanners to make sure player is actually on board ship before saying she is
+- add moons to the universe
+- add more derelicts
+- need to make the ship name more significant
+- endgame doesn't work properly, need to fix
+- need to implement variable sale prices based on location
+- eat food key
+- devise a way to freeze npc movement while text is displayed
+- allow pirates to move first if player waits or tries to flee
+- linear clothing changes - select item, then color
+- allow warp sequences to be skipped
+- allow sundiving sequences to be skipped
+- changeable nipples, hair styles - can be done after hentai rewrite
+- make flopping tits animations fit actual nipples
+- backpack should be a switch not an item
+- make it possible to milk without clothing removal
+- need to update credits (see below)
+- need to make detention cell more significant
+- more stat tracking
+- player gets wound after biting cock
+- add legraf's messagewait script and:
+A better way to pause
+
+Thanks to Kagarus' example, I've found a much simpler way to pause NPCs' movement while the player is reading text. Instead of adding an event page to each NPC checking the Messagewait switch, it's much simpler to do it with one small change to the scripts:
+
+In class Game_Map:
+
+Change the update_events method to this
+Code:
+
+def update_events
+    if !$game_switches[1002]
+      for event in @events.values
+        event.update
+      end
+      for common_event in @common_events.values
+        common_event.update
+      end
+    end  
+  end
+
+This still requires two changes, as I mentioned earlier, to class Window_Message. In start_message, append the line $game_switches[1002] = true. In terminate_message, append $game_switches[1002] = false.
+I'm using a new switch 1002 for this, since it never has to be checked outside of the scripts.
+
+This pauses all events, not just NPCs, which I think should be fine. As before, there is a step between messages, so looking through multiple pages (implemented as multiple messages) will allow a little movement by NPCs. 
+
+- add new ISS pic
+- add script:
+#Kagarus
+
+#######################################
+# Remove limit of 99 items in inventory
+#######################################
+
+class Scene_Shop
+  def update_buy_selection
+    @status_window.item = @buy_window.item
+    if Input.trigger?(Input::B)
+      Sound.play_cancel
+      @command_window.active = true
+      @dummy_window.visible = true
+      @buy_window.active = false
+      @buy_window.visible = false
+      @status_window.visible = false
+      @status_window.item = nil
+      @help_window.set_text("")
+      return
+    end
+    if Input.trigger?(Input::C)
+      @item = @buy_window.item
+      number = $game_party.item_number(@item)
+      if @item == nil or @item.price > $game_party.gold
+        Sound.play_buzzer
+      else
+        Sound.play_decision
+        max = @item.price == 0 ? 99999 : $game_party.gold / @item.price
+        @buy_window.active = false
+        @buy_window.visible = false
+        @number_window.set(@item, max, @item.price)
+        @number_window.active = true
+        @number_window.visible = true
+      end
+    end
+  end
+end
+
+class Window_ShopBuy
+  def draw_item(index)
+    item = @data[index]
+    number = $game_party.item_number(item)
+    enabled = (item.price <= $game_party.gold)
+    rect = item_rect(index)
+    self.contents.clear_rect(rect)
+    draw_item_name(item, rect.x, rect.y, enabled)
+    rect.width -= 4
+    self.contents.draw_text(rect, item.price, 2)
+  end
+end
+
+class Game_Party
+  def drnlgbr_grafikal_limited_inventory_gn_itm_94n6(item, n, include_equip = false)
+    number = item_number(item)
+    case item
+    when RPG::Item
+      @items[item.id] = [number + n, 0].max
+    when RPG::Weapon
+      @weapons[item.id] = [number + n, 0].max
+    when RPG::Armor
+      @armors[item.id] = [number + n, 0].max
+    end
+    n += number
+    if include_equip and n < 0
+      for actor in members
+        while n < 0 and actor.equips.include?(item)
+          actor.discard_equip(item)
+          n += 1
+        end
+      end
+    end
+  end
+end
+
+########
+# 99 end
+########
+
+#################
+# 100 save slots
+#################
+
+module Wora_NSS
+  MAX_SAVE_SLOT = 100
+end
+
+#######################
+# 100 save slots end
+#######################
+
+Reported Bugs:
+- issues with gaining and losing clothes in the gamer area / Coverage can be greater than 0 without clothes? (probably connected to overshirts and unusual combinations of clothes)
+- Implement Legends Roster (listing of top donaters)
+- stuck at home after levelup dream
+- issues with betting clothes in odd combinations (betting panties while upper body is still fully dressed)
+- loot clothing tint does not match actual item
+- after losing bottom player sprite dissapears when shooting
+- being defeated on largo causes black screen lockup
+- Earth landing uses simple planet squence
+- emergency overlay (darkness effect?) during boarding is hiding things (like scenes)
+- screen flashes (humiliation) revert red tinting effects
+- dresses don't cover bottom like they should
+- no bra causes no shirt reaction
+- With the Sporty background, when you chase down the rapist in the alleyway, if you choose to go with him, you wake up in the hideout - but the text still pops up and has you go through the conversation until you decide to not go with him. After that, you're taken out of the rapist's hideout. 
+- mining bot starts at 0 health, need way to repair/replace before destroyed
+- clothing preview items not being removed (noticed on weird planet)
+- tree chopping freeze?
+- security guards still get turned on when landing or loading naked in ship at spaceport
+- character stuck on screen after ko in city
+- RBUS works without a selected ship if no ships are selected
+- darkness effect not cleared when reactor is restored
+- paperdoll wont display in dark
+- after rape clothing does not register (your nothing was damaged)
+- rapists not respawning after map is reloaded - put self-switch reset code before loot/exp rewards
+- taking off spacesuit outside ship prevents entering the ship
+- fix issue on boarding map where the door may chase the player around
+- put Sara back in her cell if player is caught while rescuing her
+- suit and radiation cloak does not protect against radiation (still)
+- weapon shop gives ffl without signing form
+- sex in progress swtich not being reset at end of hentai
+- combat computer skips missile targeting after destroying multiple missiles on same turn
+
+
+Savefiles Needed:
+- rare bug at character creator, losing clothes at exit  - need savefile
+- return to landing zones end up in impassible tiles?
+
+credits to add:
+- Legraf (ideas and bug testing/fixing)
+- RPGfan65535 (bank loan idea)
+- a123eng (font change help)
+- wessex (new iss)
+
+Donations:
+- Buster: $234
+- Lordlubu21: $100
+- Anonymous: $20
+- Anonymous: $15
+- Anonymous: $5
+
+Long Term:
+- Recycling Centers - will pay a small amount for garbage and you get Karma and Respect for each container.
+- planned: student adventure path
+- Genetics (Futureworld game start)
+- setup composite character sprites script for clothing updates
+- female gamers
+- evil activities
+- diminishing returns
+- ninja skill?
+- weapons mods
+- replace display viewscreens with cockpit view where applicable.
+- house map, randomizer for it?
+- "backpack slots" for clothes, which is basically a top, bottom, undies, and bra slot attached to your backpack that you can switch to when you have the backpack.
+- mission generator
+- dating sim style gameplay
